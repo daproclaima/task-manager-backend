@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Task, TaskStatus } from './task.model';
 import { v4 as uuid } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -13,7 +13,21 @@ export class TasksService {
   }
 
   getTaskById(id: string): Task {
-    return this.tasks.find((task) => task.id === id);
+    const found = this.tasks.find((task) => task.id === id);
+
+    if (!found) {
+      //  Nest provides the error handler,
+      //  we return an error not handled by controller,
+      //  but to nest behind the scene (as an http error excep)
+      /*
+        {
+          "statusCode": 404,
+          "message": "Task with id not found"
+        }
+      */
+      throw new NotFoundException(`Task with ${id} not found`);
+    }
+    return found;
   }
 
   getTasksWithFilters(filterDto: GetTasksFilterDto): Task[] {
