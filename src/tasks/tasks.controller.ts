@@ -5,7 +5,10 @@ import {
   Get,
   Param,
   Patch,
-  Post, Query,
+  Post,
+  Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task, TaskStatus } from './task.model';
@@ -40,6 +43,8 @@ export class TasksController {
 
   // second option, we only extract what we want
   @Post()
+  // ValidationPipe is smart enough to use the right validator below
+  @UsePipes(ValidationPipe)
   createTask(@Body() createTaskDto: CreateTaskDto): Task {
     // console.log('title:', title);
     // console.log('description:', description);
