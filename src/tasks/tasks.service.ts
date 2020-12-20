@@ -12,7 +12,7 @@ export class TasksService {
   }
 
   getTaskById(id: string): Task {
-    return this.tasks.find(task => task.id === id);
+    return this.tasks.find((task) => task.id === id);
   }
 
   createTask(createTaskDto: CreateTaskDto): Task {
@@ -28,5 +28,9 @@ export class TasksService {
     // return the task. Frontend devs need it,
     // that way they don t need an extra fetch or refresh the application
     return task;
+  }
+
+  deleteTask(id: string): void {
+    this.tasks = this.tasks.filter((task) => task.id !== id);
   }
 }
