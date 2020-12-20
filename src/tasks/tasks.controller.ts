@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task } from './task.model';
 
@@ -11,5 +11,22 @@ export class TasksController {
   @Get()
   getAllTasks(): Task[] {
     return this.taskService.getAllTasks();
+  }
+
+  // first option: we extract everything
+  // @Post()
+  // createTask(@Body() body) {
+  //   console.log('body', body);
+  // }
+
+  // second option, we only extract what we want
+  @Post()
+  createTask(
+    @Body('title') title: string,
+    @Body('description') description: string,
+  ): Task {
+    // console.log('title:', title);
+    // console.log('description:', description);
+    return this.taskService.createTask(title, description);
   }
 }
