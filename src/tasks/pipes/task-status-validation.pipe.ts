@@ -2,7 +2,7 @@ import {
   BadRequestException,
   PipeTransform /* , ArgumentMetadata */,
 } from '@nestjs/common';
-import { TaskStatus } from '../task.model';
+import { TaskStatus } from '../task-status.enum';
 
 export class TaskStatusValidationPipe implements PipeTransform {
   // can not be modified at runtime
