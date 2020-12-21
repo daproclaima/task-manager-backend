@@ -15,7 +15,7 @@ export class AuthService {
   }
 
   async signIn(authCredentialsDto: AuthCredentialsDto) {
-    const username = await this.userRepository.validationPassword(
+    const username = await this.userRepository.validateUserPassword(
       authCredentialsDto,
     );
     if (!username) {
