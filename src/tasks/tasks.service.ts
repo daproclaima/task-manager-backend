@@ -51,30 +51,9 @@ export class TasksService {
   // }
   //
   async createTask(createTaskDto: CreateTaskDto) {
-    const { title, description } = createTaskDto;
-    const task = new Task();
-    task.title = title;
-    task.description = description;
-    task.status = TaskStatus.OPEN;
-    await task.save();
-
-    return task;
+    return this.taskRepository.createTask(createTaskDto);
   }
-  // createTask(createTaskDto: CreateTaskDto): Task {
-  //   const { title, description } = createTaskDto;
-  //   const task: Task = {
-  //     id: uuid(),
-  //     title,
-  //     description,
-  //     status: TaskStatus.OPEN,
-  //   };
-  //
-  //   this.tasks.push(task);
-  //   // return the task. Frontend devs need it,
-  //   // that way they don t need an extra fetch or refresh the application
-  //   return task;
-  // }
-  //
+
   // deleteTask(id: string): void {
   //   // todo: read the tasks array twice. refactor
   //   const found = this.getTaskById(id);
