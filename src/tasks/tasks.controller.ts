@@ -37,22 +37,12 @@ export class TasksController {
     return this.taskService.getTaskById(id);
   }
 
-  // // first option: we extract everything
-  // // @Post()
-  // // createTask(@Body() body) {
-  // //   console.log('body', body);
-  // // }
-  //
-  // // second option, we only extract what we want
-  // @Post()
-  // // ValidationPipe is smart enough to use the right validator below
-  // @UsePipes(ValidationPipe)
-  // createTask(@Body() createTaskDto: CreateTaskDto): Task {
-  //   // console.log('title:', title);
-  //   // console.log('description:', description);
-  //   return this.taskService.createTask(createTaskDto);
-  // }
-  //
+  @Post()
+  @UsePipes(ValidationPipe)
+  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
+    return this.taskService.createTask(createTaskDto);
+  }
+
   // @Delete('/:id')
   // deleteTask(@Param('id') id: string): void {
   //   return this.taskService.deleteTask(id);
