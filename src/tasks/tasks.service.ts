@@ -1,31 +1,40 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { TaskRepository } from './task.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Task } from './task.entity';
+
 @Injectable()
 export class TasksService {
+  constructor(
+    @InjectRepository(TaskRepository)
+    private taskRepository: TaskRepository,
+  ) {}
+
   // // declaring the typehint is not mandatory in ts but bring better design
   // getAllTasks(): Task[] {
   //   return this.tasks;
   // }
-  //
-  // getTaskById(id: string): Task {
-  //   const found = this.tasks.find((task) => task.id === id);
-  //
-  //   if (!found) {
-  //     //  Nest provides the error handler,
-  //     //  we return an error not handled by controller,
-  //     //  but to nest behind the scene (as an http error excep)
-  //     /*
-  //       {
-  //         "statusCode": 404,
-  //         "message": "Task with id not found"
-  //       }
-  //     */
-  //     throw new NotFoundException(`Task with ${id} not found`);
-  //   }
-  //   return found;
-  // }
-  //
+
+  async getTaskById(id: number): Promise<Task> {
+    const found = await this.taskRepository.findOne(id);
+
+    if (!found) {
+      //  Nest provides the error handler,
+      //  we return an error not handled by controller,
+      //  but to nest behind the scene (as an http error excep)
+      /*
+        {
+          "statusCode": 404,
+          "message": "Task with id not found"
+        }
+      */
+      throw new NotFoundException(`Task with ${id} not found`);
+    }
+    return found;
+  }
+
   // getTasksWithFilters(filterDto: GetTasksFilterDto): Task[] {
   //   const { status, search } = filterDto;
   //   let tasks = this.getAllTasks();
