@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './task.entity';
 import { TaskStatus } from './task-status.enum';
 import { DeleteResult } from 'typeorm';
+import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 
 @Injectable()
 export class TasksService {
@@ -13,10 +14,9 @@ export class TasksService {
     private taskRepository: TaskRepository,
   ) {}
 
-  // // declaring the typehint is not mandatory in ts but bring better design
-  // getAllTasks(): Task[] {
-  //   return this.tasks;
-  // }
+  async getTasks(fitlerDto: GetTasksFilterDto): Promise<Task[]> {
+    return this.taskRepository.getTasks(fitlerDto);
+  }
 
   async getTaskById(id: number): Promise<Task> {
     const found = await this.taskRepository.findOne(id);
