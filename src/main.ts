@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 import * as config from 'config';
 async function bootstrap() {
+  const serverConfig = config.get('server');
   /*
   in dev env: Log, Error, Warning, Debug, Verbose,
   in staging env: Log, Error, Warning,
@@ -13,11 +14,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // select the config folder based on NODE_ENV
-  const serverConfig = config.get('server');
-
   console.log(serverConfig);
 
-  const port = 3000;
+  const port = process.env.PORT || serverConfig.port;
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);
 }
