@@ -58,9 +58,8 @@ export class TaskRepository extends Repository<Task> {
         }". Data: ${JSON.stringify(createTaskDto)}`,
         error.stack,
       );
-      throw new InternalServerErrorException()
+      throw new InternalServerErrorException();
     }
-
 
     delete task.user;
 

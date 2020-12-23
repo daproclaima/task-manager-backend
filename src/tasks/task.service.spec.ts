@@ -4,12 +4,17 @@ import { TaskRepository } from './task.repository';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatus } from './task-status.enum';
 import {NotFoundException} from "@nestjs/common";
+import {CreateTaskDto} from "./dto/create-task.dto";
+import {User} from "../auth/user.entity";
+import {IsNotEmpty} from "class-validator";
+import {Task} from "./task.entity";
 
 const mockUser = { id: 12, username: 'Test user' };
 // factory function syntax so self called
 const mockTaskRepository = () => ({
   getTasks: jest.fn(),
   findOne: jest.fn(),
+  createTask: jest.fn(),
 });
 
 describe('TaskService', () => {
@@ -63,6 +68,30 @@ describe('TaskService', () => {
       expect(tasksService.getTaskById(0, mockUser)).rejects.toThrow(
         NotFoundException,
       );
+    });
+  });
+
+  describe('createTask', () => {
+    // async createTask(createTaskDto: CreateTaskDto, user: User) {
+    // return this.taskRepository.createTask(createTaskDto, user);
+    // }
+    it('calls repository.createTask and returns the result', async () => {
+      //  3
+      taskRepository.createTask.mockResolvedValue('someTask');
+      // 1
+      expect(taskRepository.createTask).not.toHaveBeenCalled();
+      const createTaskDto = { title: 'Test task', description: 'Test desc' };
+      // We don t care about how the repository handles this request
+      //  We just need to check that services does call repository.createTask
+      // taskRepository.createTask.mockResolvedValue(createTaskMock, mockUser);
+      // 2
+      const result = await tasksService.createTask(createTaskDto, mockUser);
+      expect(taskRepository.createTask).toHaveBeenCalledWith(
+        createTaskDto,
+        mockUser,
+      );
+      // 3
+      expect(result).toEqual('someTask');
     });
   });
 });
