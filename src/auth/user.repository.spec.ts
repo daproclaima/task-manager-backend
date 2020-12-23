@@ -1,8 +1,11 @@
 import { Test } from '@nestjs/testing';
 import { UserRepository } from './user.repository';
-import {ConflictException, InternalServerErrorException} from "@nestjs/common";
-// import {InternalServerErrorException} from "@nestjs/common";
-
+import {
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { User } from './user.entity';
+import * as bcrypt from 'bcrypt';
 const mockCrendentialDto = {
   username: 'TestUsername',
   password: 'TestPassword1;',
@@ -44,6 +47,57 @@ describe('UserRepository', () => {
       expect(userRepository.signUp(mockCrendentialDto))
         .rejects.toThrow(InternalServerErrorException)
         .catch(Error);
+    });
+  });
+
+  describe('validatePassword', () => {
+    let user;
+    beforeEach(() => {
+      userRepository.findOne = jest.fn();
+      user = new User();
+      user.username = 'TestUsername';
+      user.validatePassword = jest.fn();
+    });
+
+    it('returns the username as validation is successful', async () => {
+      userRepository.findOne.mockResolvedValue(user);
+      user.validatePassword.mockResolvedValue(true);
+      const result = await userRepository.validateUserPassword(
+        mockCrendentialDto,
+      );
+      expect(result).toEqual('TestUsername');
+    });
+
+    it('returns null user as user can not be found', async () => {
+      userRepository.findOne.mockResolvedValue(null);
+      const result = await userRepository.validateUserPassword(
+        mockCrendentialDto,
+      );
+      expect(user.validatePassword).not.toHaveBeenCalled();
+      expect(result).toBeNull();
+    });
+
+    it('returns null user as password is invalid', async () => {
+      userRepository.findOne.mockResolvedValue(user);
+      user.validatePassword.mockResolvedValue(false);
+      const result = await userRepository.validateUserPassword(
+        mockCrendentialDto,
+      );
+      expect(user.validatePassword).toHaveBeenCalled();
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('hashPassword', () => {
+    it('calls bcrypt.hash to generate hash', async () => {
+      bcrypt.hash = jest.fn().mockResolvedValue('testHash');
+      expect(bcrypt.hash).not.toHaveBeenCalled();
+      const result = await userRepository.hashPassword(
+        'testPassword',
+        'testSalt',
+      );
+      expect(bcrypt.hash).toHaveBeenCalledWith('testPassword', 'testSalt');
+      expect(result).toEqual('testHash');
     });
   });
 });
