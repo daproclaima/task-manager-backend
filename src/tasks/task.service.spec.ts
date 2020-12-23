@@ -114,18 +114,17 @@ describe('TaskService', () => {
   });
 
   describe('updateTaskStatus', () => {
-    const mockUpdatedTask = new Task();
-    mockUpdatedTask.id = 1;
-    mockUpdatedTask.title = 'Test task';
-    mockUpdatedTask.description = 'Test desc';
-    mockUpdatedTask.status = TaskStatus.OPEN;
-    mockUpdatedTask.userId = 1;
-    mockUpdatedTask.save = jest.fn();
-
-    let result;
     it('saves and returns the updated task', async () => {
-      tasksService.getTaskById = jest.fn();
-      tasksService.getTaskById.mockResolvedValue(mockUpdatedTask);
+      const save = jest.fn().mockResolvedValue(true);
+      let result;
+
+      tasksService.getTaskById = jest.fn().mockResolvedValue({
+        status: TaskStatus.OPEN,
+        save,
+      });
+
+      expect(save).not.toHaveBeenCalled();
+      expect(tasksService.getTaskById).not.toHaveBeenCalled();
 
       result = await tasksService.updateTaskStatus(
         1,
@@ -133,27 +132,25 @@ describe('TaskService', () => {
         mockUser,
       );
 
-      mockUpdatedTask.status = TaskStatus.IN_PROGRESS;
-      expect(mockUpdatedTask.save).toHaveBeenCalled();
-      expect(result).toEqual(mockUpdatedTask);
+      expect(tasksService.getTaskById).toHaveBeenCalled();
+      expect(save).toHaveBeenCalled();
+      expect(result.status).toEqual(TaskStatus.IN_PROGRESS);
 
       result = await tasksService.updateTaskStatus(
         1,
         TaskStatus.DONE,
         mockUser,
       );
-      mockUpdatedTask.status = TaskStatus.DONE;
-      expect(mockUpdatedTask.save).toHaveBeenCalled();
-      expect(result).toEqual(mockUpdatedTask);
+      expect(result.save).toHaveBeenCalled();
+      expect(result.status).toEqual(TaskStatus.DONE);
 
       result = await tasksService.updateTaskStatus(
         1,
         TaskStatus.OPEN,
         mockUser,
       );
-      mockUpdatedTask.status = TaskStatus.OPEN;
-      expect(mockUpdatedTask.save).toHaveBeenCalled();
-      expect(result).toEqual(mockUpdatedTask);
+      expect(result.save).toHaveBeenCalled();
+      expect(result.status).toEqual(TaskStatus.OPEN);
     });
   });
 });
