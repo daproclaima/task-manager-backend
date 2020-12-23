@@ -2,11 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 import * as config from 'config';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 async function bootstrap() {
+  const dotenv = require('dotenv');
+  dotenv.config();
   const serverConfig = config.get('server');
   /*
   in dev env: Log, Error, Warning, Debug, Verbose,
@@ -20,7 +19,7 @@ async function bootstrap() {
   if (process.env.NODE_ENV === 'development') {
     app.enableCors();
   } else {
-    app.enableCors({ origin: process.env.ORIGIN })
+    app.enableCors({ origin: process.env.ORIGIN });
   }
 
   // select the config folder based on NODE_ENV
