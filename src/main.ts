@@ -20,6 +20,7 @@ async function bootstrap() {
     app.enableCors();
   } else {
     app.enableCors({ origin: process.env.ORIGIN });
+    logger.log(`Accepting requests from origin "${process.env.ORIGIN}"`);
   }
 
   // select the config folder based on NODE_ENV
