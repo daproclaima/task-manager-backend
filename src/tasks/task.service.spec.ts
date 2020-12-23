@@ -1,9 +1,10 @@
-import { Test } from '@nestjs/testing';
-import { TasksService } from './tasks.service';
-import { TaskRepository } from './task.repository';
-import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
-import { TaskStatus } from './task-status.enum';
-import { NotFoundException } from '@nestjs/common';
+import {Test} from '@nestjs/testing';
+import {TasksService} from './tasks.service';
+import {TaskRepository} from './task.repository';
+import {GetTasksFilterDto} from './dto/get-tasks-filter.dto';
+import {TaskStatus} from './task-status.enum';
+import {NotFoundException} from '@nestjs/common';
+import {Task} from "./task.entity";
 
 const mockUser = { id: 12, username: 'Test user' };
 // factory function syntax so self called
@@ -109,6 +110,50 @@ describe('TaskService', () => {
       expect(tasksService.deleteTask(1, mockUser)).rejects.toThrow(
         NotFoundException,
       );
+    });
+  });
+
+  describe('updateTaskStatus', () => {
+    const mockUpdatedTask = new Task();
+    mockUpdatedTask.id = 1;
+    mockUpdatedTask.title = 'Test task';
+    mockUpdatedTask.description = 'Test desc';
+    mockUpdatedTask.status = TaskStatus.OPEN;
+    mockUpdatedTask.userId = 1;
+    mockUpdatedTask.save = jest.fn();
+
+    let result;
+    it('saves and returns the updated task', async () => {
+      tasksService.getTaskById = jest.fn();
+      tasksService.getTaskById.mockResolvedValue(mockUpdatedTask);
+
+      result = await tasksService.updateTaskStatus(
+        1,
+        TaskStatus.IN_PROGRESS,
+        mockUser,
+      );
+
+      mockUpdatedTask.status = TaskStatus.IN_PROGRESS;
+      expect(mockUpdatedTask.save).toHaveBeenCalled();
+      expect(result).toEqual(mockUpdatedTask);
+
+      result = await tasksService.updateTaskStatus(
+        1,
+        TaskStatus.DONE,
+        mockUser,
+      );
+      mockUpdatedTask.status = TaskStatus.DONE;
+      expect(mockUpdatedTask.save).toHaveBeenCalled();
+      expect(result).toEqual(mockUpdatedTask);
+
+      result = await tasksService.updateTaskStatus(
+        1,
+        TaskStatus.OPEN,
+        mockUser,
+      );
+      mockUpdatedTask.status = TaskStatus.OPEN;
+      expect(mockUpdatedTask.save).toHaveBeenCalled();
+      expect(result).toEqual(mockUpdatedTask);
     });
   });
 });
