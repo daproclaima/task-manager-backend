@@ -21,7 +21,7 @@ export class AuthController {
   signUp(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
   ): Promise<void> {
-    this.logger.debug(`Signup data: ${authCredentialsDto}`);
+    this.logger.debug(`Signup data: ${JSON.stringify(authCredentialsDto)}`);
     return this.authService.signUp(authCredentialsDto);
   }
 
@@ -29,7 +29,7 @@ export class AuthController {
   signIn(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
-    this.logger.debug(`Signin data: ${authCredentialsDto}`);
+    this.logger.debug(`Signin data: ${JSON.stringify(authCredentialsDto)}`);
     return this.authService.signIn(authCredentialsDto);
   }
 
