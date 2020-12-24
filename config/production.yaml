@@ -1,4 +1,4 @@
 server:
-  origin:
+  origin: 'http://task-manager-frontend-nobour.s3-website.eu-west-3.amazonaws.com'
 db:
   synchronize: false
